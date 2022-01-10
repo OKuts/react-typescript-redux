@@ -18,7 +18,7 @@ export const UserList: FC = () => {
     if (error) return <h1>Server error</h1>
 
     const handler = (user: IUser) => {
-        navigate('user', {state: user})
+        navigate('/users/user', {state: user})
     }
 
     return (

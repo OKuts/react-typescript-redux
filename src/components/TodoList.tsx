@@ -1,34 +1,39 @@
 import {FC, useEffect} from 'react'
 import {useTypedSelector} from "../hooks/useTypedSelector";
-import {useDispatch} from "react-redux";
-import {fetchTodos} from "../action-creators/todo";
 import {ITodo} from "../types/todos";
 import {useNavigate} from "react-router-dom";
+import {useActions} from "../hooks/useActions";
 
 export const TodoList: FC = () => {
-    const dispatch = useDispatch()
     const navigate = useNavigate()
-    const {todos, error, loading} = useTypedSelector(state => state.todo)
+    const {fetchTodos, setTodoPage} = useActions()
+    const {todos, error, loading, page, limit} = useTypedSelector(state => state.todo)
+
+    const pages = [1, 2, 3, 4, 5]
 
     useEffect(() => {
-        dispatch(fetchTodos())
-    }, [])
+        fetchTodos(page, limit)
+    }, [page])
 
-    if (loading) return <h1>Loading ...</h1>
+    if (loading) return null
     if (error) return <h1>Error ...</h1>
 
     const handler = (todo: ITodo) => {
-        navigate('todo', {state: todo})
+        navigate('/todos/todo', {state: todo})
     }
 
     return (
         <>
             {todos.map(todo =>
                 <p
-                    onClick = {() => handler(todo)}
+                    onClick={() => handler(todo)}
                     key={todo.id}>
                     {todo.id} {todo.title}
                 </p>)}
+            {pages.map(n =>
+                <button onClick={() => setTodoPage(n)}>
+                    {n}
+                </button>)}
         </>
     )
 }
